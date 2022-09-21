@@ -1,11 +1,28 @@
 # 练习[CKAD-exercises](https://github.com/dgkanatsios/CKAD-exercises)的笔记
 
 系统的练习一遍。。。否则直接裸考会因为两个小时不够用
+本训练题中缺少一些具体的pod，container,命名的要求。实际考试中是有具体的命名要求的。要仔细读题
 
 
 ## 官方文档参考
 
 1. [cheatsheet起手](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+
+## 章节考点梳理
+
+1. Core Concepts (13%) 核心概念
+    TODO:
+2. Multi-container Pods (10%) 多容器pods
+    TODO:
+3. Pod design (20%) pod设计
+    label，anotation部分:
+        增删改查，标签选择表达式。
+    deployment 部分：
+        创建，replicas设置，deployment版本管理（查看revision，更新，回滚,暂停，恢复）,横向扩容,自动横向扩容（hpa），金丝雀发布
+    
+    job 部分：
+
+4. 
 
 ## 写给自己的一些考前小抄
 
@@ -51,10 +68,15 @@
     kubectl autoscale deployment nginx-test-deploy --min=5 --max=10 --cpu-percent=80
     # 查看横向自动扩容的配置 horizontalpodautoscalers缩写（hpa）
     kubectl get hpa nginx
-    # 金丝雀发布，这个难以避免要手动写一些deployment.yaml的配置，尤其volume挂
-
 ```
+6. 金丝雀发布
+    这个难以避免要手动写一些deployment.yaml的配置，尤其volume挂载。这里简单描述下思路。
+    
+    创建v1版本的deploy，replicas=3，挂载Mount，initContainers写入v1版本的html，为pod模板添加version：v1的label；
 
+    复制一份yaml创建v2版本修改html为v2，replicas=3，修改version：v2的label。以他们公共的app:nginx 为label创建svc.
+
+    访问svc，验证金丝雀发布是否成功。业务上当金丝雀stable之后，将v2的replicas扩到4，v1缩掉即可
 
 ## 关于vim
 以下是我目前对vim的掌握,需要注意的是，vim编辑yaml的时候统一使用空格，tab会带来意料以外的错误。
@@ -66,6 +88,7 @@
 hjkl移动光标，ZZ保存退出，ZQ不保存退出
 y 复制
 x 剪贴
+dd 剪贴行
 p 粘贴
 0 回到行首
 $ 到行尾
@@ -79,8 +102,9 @@ shift-A 到行尾进入插入模式
 
 ### 输入冒号进入命令模式：
 常用命令：
-set number/nonumber 显示/隐藏行号
-set paste 粘贴模式
+:set number/nonumber 显示/隐藏行号
+:set paste 粘贴模式
+:%s/foo/bar/g 全文替换
 ### visual模式（按v进入）
 可以使用快捷键进行行选择，复制粘贴
 ### 列visual模式（按ctrl-v进入）
