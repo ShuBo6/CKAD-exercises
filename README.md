@@ -1,31 +1,26 @@
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![unofficial Google Analytics for GitHub](https://gaforgithub.azurewebsites.net/api?repo=CKAD-exercises)](https://github.com/dgkanatsios/gaforgithub)
+# 练习中的一些tips
 
-# CKAD Exercises
+1. --dry-run=client -o yaml 这个要打熟练
 
-A set of exercises that helped me prepare for the [Certified Kubernetes Application Developer](https://www.cncf.io/certification/ckad/) exam, offered by the Cloud Native Computing Foundation, organized by curriculum domain. They may as well serve as learning and practicing with Kubernetes.
+2. annotate label操作要熟练。标签选择表达式 ,
+    例如 :
 
-During the exam, you are allowed to keep only one other browser tab open to refer to official documentation. Make a mental note of the breadcrumb at the start of the excercise section, to quickly locate the relevant document in kubernetes.io. It is recommended that you read the official documents before attempting exercises below it.
+    ```shell
+    k get nodes --show-labels
 
-## Contents
+     k label po -l "app in (v1,v2)" app=v3
+     k annotate po -l "app in (v1,v2)" tier=web
 
-- [Core Concepts - 13%](a.core_concepts.md)
-- [Multi-container pods - 10%](b.multi_container_pods.md)
-- [Pod design - 20%](c.pod_design.md)
-- [Configuration - 18%](d.configuration.md)
-- [Observability - 18%](e.observability.md)
-- [Services and networking - 13%](f.services.md)
-- [State persistence - 8%](g.state.md)
-- [helm](h.helm.md)
-- [Custom Resource Definitions](i.crd.md)
+     k annotate po nginx1 --list //冷门容易忘
+    ```
 
-> If your work is related to multiplayer game servers, checkout out [thundernetes, a brand new project to host game servers on Kubernetes](https://github.com/PlayFab/thundernetes)!
+3. 删除label或annotate 用减号。
+    例如：
 
-### Can I PR? There is an error/an alternative way/an extra question/solution I can offer
+```shell
+     k label po nginx1 app-
+     k annotate po nginx1 app-
+```
 
-Absolutely! Feel free to PR and edit/add questions and solutions, but please stick to the existing format.
+4. 善用帮助，例如我要为一个pod设置node的label选择器，我可以通过`kubectl explain pods.spec| grep node`来查询nodeSelector这个tag是如何拼写。当然这样很慢。为了提升速度还是记住。
 
-If this repo has helped you in any way, feel free to post on [discussions](https://github.com/dgkanatsios/CKAD-exercises/discussions) or buy me a coffee!
-
-<a href="https://www.buymeacoffee.com/dgkanatsios" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
