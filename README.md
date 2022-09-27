@@ -7,7 +7,7 @@
 |--|--|--|
 | 1 | Core Concepts (13%) 核心概念|TODO: | 
 | 2 | Multi-container Pods (10%) 多容器pods|TODO: |
-| 3 | Pod design (20%) pod设计| label,anotation部分:增删改查,标签选择表达式。<br /> deployment 部分： 创建,replicas设置,deployment版本管理（查看revision,更新,回滚,暂停,恢复）,横向扩容,自动横向扩容（hpa）,金丝雀发布。<br />  job 部分：增删改查，配置并行数，完成数量  <br />TODO: CronJob 部分:|
+| 3 | Pod design (20%) pod设计| label,anotation部分:增删改查,标签选择表达式。<br /> deployment 部分： 创建,replicas设置,deployment版本管理（查看revision,更新,回滚,暂停,恢复）,横向扩容,自动横向扩容（hpa）,金丝雀发布。<br />  job 部分：增删改查，配置并行数，完成数量，设置job的deadline  <br /> CronJob 部分:设置schedule，设置job的两种deadline|
 | 4 | Configuration (18%) 配置文件| TODO: |
 
 
@@ -86,6 +86,41 @@ k logs xxxx -f
 # automatically terminated by kubernetes，单位为秒
 k explain job.spec |grep activeDeadlineSeconds -A 10
 
+```
+8. cronjob
+    定时任务 使用命令创建时必须要指定schedule
+    需要注意的是有以下这样几条表达式规则
+
+    读题仔细区分`startingDeadlineSeconds`和`activeDeadlineSeconds`该用哪一个
+
+    表达式
+        在一个区域里填写多个数值的方法：
+
+        逗号（,）表示列举，例如： 1,3,4,7 * * * * echo hello world 表示，在每小时的1、3、4、7分时，打印"hello world"。
+
+        连词符（-）表示范围，例如：1-6 * * * * echo hello world ，表示，每小时的1到6分钟内，每分钟都会打印"hello world"。
+
+        星号（*）代表任何可能的值。例如：在“小时域”里的星号等于是“每一个小时”。
+
+        百分号(%) 表示“每"。例如：*%10 * * * * echo hello world 表示，每10分钟打印一回"hello world"。
+    非标准字符
+        某些cron程序的扩展版本（如：Quartz Java scheduler）也支持斜线（'/'）操作符，用于表示跳过某些给定的数。例如，
+```
+        “*/3”在小时域中等于“0,3,6,9,12,15,18,21”等被3整除的数；
+        “*/1 * * * *” 表示每分钟
+```
+
+```shell
+
+# 文件格式說明，参考https://zh.wikipedia.org/wiki/Cron
+# ┌──分鐘（0 - 59）
+# │ ┌──小時（0 - 23）
+# │ │ ┌──日（1 - 31）
+# │ │ │ ┌─月（1 - 12）
+# │ │ │ │ ┌─星期（0 - 6，表示从周日到周六）
+# │ │ │ │ │
+# *  *  *  *  * 被執行的命令
+k explain cronjob.spec | grep schedule
 ```
 
 
