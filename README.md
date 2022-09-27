@@ -73,7 +73,20 @@
 7. job 
     关于job的使用，要熟练job.yaml的快速编辑。
 
+    尽可能使用`-- sh -c '命令'`避免语义歧议
+
+  
+
     要搞明白`.spec.completions`和`spec.parallelism`的 含义，参考官方文档：https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/job/#parallel-jobs
+
+```shell
+
+# 查看pod的日志,-f流动
+k logs xxxx -f
+# automatically terminated by kubernetes，单位为秒
+k explain job.spec |grep activeDeadlineSeconds -A 10
+
+```
 
 
 ## 关于vim
