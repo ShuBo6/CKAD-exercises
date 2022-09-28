@@ -8,7 +8,7 @@
 | 1 | Core Concepts (13%) 核心概念|TODO: | 
 | 2 | Multi-container Pods (10%) 多容器pods|TODO: |
 | 3 | Pod design (20%) pod设计| label,anotation部分:增删改查,标签选择表达式。<br /> deployment 部分： 创建,replicas设置,deployment版本管理（查看revision,更新,回滚,暂停,恢复）,横向扩容,自动横向扩容（hpa）,金丝雀发布。<br />  job 部分：增删改查，配置并行数，完成数量，设置job的deadline  <br /> CronJob 部分:设置schedule，设置job的两种deadline|
-| 4 | Configuration (18%) 配置文件| TODO: |
+| 4 | Configuration (18%) 配置文件| ConfigMap 部分：configMap的[字面量｜从文件]创建,挂载configMap为[环境变量｜Volume(文件)] <br />  Secret 部分：TODO: |
 
 
 ## 官方文档参考
@@ -122,6 +122,33 @@ k explain job.spec |grep activeDeadlineSeconds -A 10
 # *  *  *  *  * 被執行的命令
 k explain cronjob.spec | grep schedule
 ```
+9.ConfigMap
+```shell
+#   创建config的语法
+kubectl create configmap NAME [--from-file=[key=]source] [--from-literal=key1=value1] [--dry-run=server|client|none] [options]
+
+
+# 这样可以查一下pod中挂载configmap的用法
+# 方法1 指定configmap中的某一个kv作为环境变量
+k explain pod.spec.containers.env.valueFrom.configMapKeyRef
+# 方法2 指定configmap中的所有kv作为环境变量
+
+k explain pods.spec.containers.envFrom.configMapRef
+
+# 挂载configmap到volume作为文件
+k explain pods.spec | grep volumes
+
+k explain pods.spec.volumes | grep configMap
+
+k explain pods.spec.volumes.configMap
+
+k explain pods.spec.containers.volumeMounts
+
+
+```
+
+
+
 
 
 ## 关于vim
@@ -157,3 +184,20 @@ shift-A 到行尾进入插入模式
 常用于列空格填充,顶格子
 搭配shift+i,双击esc自动填充
 可以使用快捷键进行行选择,复制粘贴
+
+## 关于tmux
+tmux在单窗口的shell终端中可以复用打开多个会话。
+
+通常是以ctrl + b 开头然后跟一个指令进行会话操作
+
+例如：
+```shell
+tmux split-window [-h (垂直方向切分为两个窗口)]
+
+# c-b 简写代表ctrl+b
+c-b ? 查看帮助
+c-b U/D/L/R 或者方向键上下左右 切换窗口
+c-b w 切换以及管理会话
+c-b x 关闭当前窗格
+
+```
