@@ -8,7 +8,8 @@
 | 1 | Core Concepts (13%) 核心概念|TODO: | 
 | 2 | Multi-container Pods (10%) 多容器pods|TODO: |
 | 3 | Pod design (20%) pod设计| label,anotation部分:增删改查,标签选择表达式。<br /> deployment 部分： 创建,replicas设置,deployment版本管理（查看revision,更新,回滚,暂停,恢复）,横向扩容,自动横向扩容（hpa）,金丝雀发布。<br />  job 部分：增删改查，配置并行数，完成数量，设置job的deadline  <br /> CronJob 部分:设置schedule，设置job的两种deadline|
-| 4 | Configuration (18%) 配置文件| ConfigMap 部分：configMap的[字面量｜从文件]创建,挂载configMap为[环境变量｜Volume(文件)] <br />  Secret 部分：TODO: |
+| 4 | Configuration (18%) 配置文件| ConfigMap && Secret 部分： configMap的[字面量｜从文件]创建,挂载configMap为[环境变量｜Volume(文件)] <br />  SecurityContext 部分: 设置容器的用户组，capabilities（权能），seccompProfile<br />Requests And limits 部分: 现用现查 <br />serviceAccounts 部分:以serviceAccountName 的方式声明在spec中 |
+| 5 | Observability (18%)可观察性配置 | Probe 部分: TODO:|
 
 
 ## 官方文档参考
@@ -27,10 +28,10 @@
     ```shell
     k get nodes --show-labels
 
-     k label po -l "app in (v1,v2)" app=v3
-     k annotate po -l "app in (v1,v2)" tier=web
+    k label po -l "app in (v1,v2)" app=v3
+    k annotate po -l "app in (v1,v2)" tier=web
 
-     k annotate po nginx1 --list //冷门容易忘
+    k annotate po nginx1 --list //冷门容易忘
     ```
 
 3. 删除label或annotate 用减号。
@@ -122,7 +123,7 @@ k explain job.spec |grep activeDeadlineSeconds -A 10
 # *  *  *  *  * 被執行的命令
 k explain cronjob.spec | grep schedule
 ```
-9.ConfigMap
+9. ConfigMap && Secrets
 ```shell
 #   创建config的语法
 kubectl create configmap NAME [--from-file=[key=]source] [--from-literal=key1=value1] [--dry-run=server|client|none] [options]
@@ -136,18 +137,37 @@ k explain pod.spec.containers.env.valueFrom.configMapKeyRef
 k explain pods.spec.containers.envFrom.configMapRef
 
 # 挂载configmap到volume作为文件
-k explain pods.spec | grep volumes
-
-k explain pods.spec.volumes | grep configMap
-
-k explain pods.spec.volumes.configMap
-
+# 思路： 挂载cofigmap为volumes,首先要声明volumes,volumes是声明在spec下的
+k explain pods.spec.volumes.configMap.items
+# 思路：显然，volumeMounts是containers下的属性
 k explain pods.spec.containers.volumeMounts
-
+# 同理，挂载secret为volumes
+k explain po.spec.volumes.secret.items
 
 ```
+10. SecurityContext（是设置给容器的安全上下文）
+```shell
+# runAsGroup，runAsUser，capabilities，seccompProfile这几个考的时候查一下文档吧，不多做记忆
+# 见名知义
+# k explain po.spec.containers.securityContext
+```
 
+11. Requests and limits
+```shell
+# 同样的思路，这个属性是属于容器的resources下的。
+k explain po.spec.containers.resources
+```
+12. ServiceAccounts
+```shell
+# 服务账号，用户api资源访问控制，默认情况下，每一个namespace下都会有一个名为default的serviceAccount。pod资源创建时如果不指定serviceAccounts他会自动选择default,填入spec.serviceAccountName。
 
+k explain po.spec.serviceAccountName
+
+```
+13. TODO: Probe
+```shell
+k explain po.spec.containers.livenessProbe
+```
 
 
 
