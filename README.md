@@ -9,7 +9,8 @@
 | 2 | Multi-container Pods (10%) 多容器pods|TODO: |
 | 3 | Pod design (20%) pod设计| label,anotation部分:增删改查,标签选择表达式。<br /> deployment 部分： 创建,replicas设置,deployment版本管理（查看revision,更新,回滚,暂停,恢复）,横向扩容,自动横向扩容（hpa）,金丝雀发布。<br />  job 部分：增删改查，配置并行数，完成数量，设置job的deadline  <br /> CronJob 部分:设置schedule，设置job的两种deadline|
 | 4 | Configuration (18%) 配置文件| ConfigMap && Secret 部分： configMap的[字面量｜从文件]创建,挂载configMap为[环境变量｜Volume(文件)] <br />  SecurityContext 部分: 设置容器的用户组，capabilities（权能），seccompProfile<br />Requests And limits 部分: 现用现查 <br />serviceAccounts 部分:以serviceAccountName 的方式声明在spec中 |
-| 5 | Observability (18%)可观察性配置 | Probe 部分: TODO:|
+| 5 | Observability (18%)可观察性配置 | Probe 部分: livenessProbe,readinessProbe,startupProbe 的创建及观察，pod 日志观察，资源使用情况观察|
+| 6 | Services and Networking (13%) | TODO:|
 
 
 ## 官方文档参考
@@ -182,6 +183,17 @@ k logs podname [-f]
 k delete po poname --force --grace-period=0
 # 观察资源使用情况(需要安装metrics-service)
 k top resourceName
+```
+14.  service && network
+```shell
+# 加一个--expose参数会在创建pod的同时为其创建一个svc
+k run nginx --image=nginx --port=80 --expose
+# 启动临时容器的来测试svc的连通性，一定要记得加上--restart=Never参数！！！
+k run test --rm --image=nginx  -it --restart=Never -- bash -c 'curl nginx'
+
+# 为deploy 暴露6262端口并指向8080
+k expose deploy foo --port=6262 --target-port=8080
+# TODO: networkPolicy
 ```
 
 
