@@ -164,9 +164,24 @@ k explain po.spec.containers.resources
 k explain po.spec.serviceAccountName
 
 ```
-13. TODO: Probe
+13. Observability 
 ```shell
-k explain po.spec.containers.livenessProbe
+kubectl explain pod.spec.containers | grep Probe
+# 存活探针livenessProbe（检测应用程序是否被死锁，是否存活）、就绪探针readinessProbe（通过就绪探针控制service会不会将其选择为endpoint）、启动探针startupProbe（解决慢启动程序的探活问题）
+k explain po.spec.containers.
+
+# 获取pod的事件，可以用来查probe的报错信息。
+k get events 
+
+k get events -A | grep -i "probe failed"|awk '{print $1,$5}'
+
+# 查看pod日志 -f参数是flow的意思
+k logs podname [-f]
+
+# 强制立即删除pod。grace-period 是平滑的删除一个资源时的等待时间，只有--force为true的时候--grace-period才能等于0，否则可以设置为1或负数，负数是默认值，即忽略这个option
+k delete po poname --force --grace-period=0
+# 观察资源使用情况(需要安装metrics-service)
+k top resourceName
 ```
 
 
@@ -212,6 +227,9 @@ tmux在单窗口的shell终端中可以复用打开多个会话。
 
 例如：
 ```shell
+tmux detach 挂起客户端，回到shell
+tmux attach 恢复客户端
+
 tmux split-window [-h (垂直方向切分为两个窗口)]
 
 # c-b 简写代表ctrl+b
@@ -219,5 +237,7 @@ c-b ? 查看帮助
 c-b U/D/L/R 或者方向键上下左右 切换窗口
 c-b w 切换以及管理会话
 c-b x 关闭当前窗格
+c-b [ 开始屏幕翻页（mac下fn+方向键是翻页）
+
 
 ```
