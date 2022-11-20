@@ -193,7 +193,13 @@ k run test --rm --image=nginx  -it --restart=Never -- bash -c 'curl nginx'
 
 # 为deploy 暴露6262端口并指向8080
 k expose deploy foo --port=6262 --target-port=8080
-# TODO: networkPolicy
+# networkPolicy ,别名netpol (需要有提供networkPolicy能力的controller才会生效)
+# networkpolicy 貌似没法用kubectl直接create。因此应当尽可能快的在浏览器粘贴模板
+# https://raw.githubusercontent.com/kubernetes/website/main/content/zh-cn/examples/service/networking/networkpolicy.yaml
+# 测试networkpolicy时的小技巧 (--labels=access=granted --timeout 2 )
+kubectl run busybox --image=busybox --rm -it --restart=Never --labels=access=granted -- wget -O- http://nginx:80 --timeout 2  # This should be fine
+
+
 ```
 
 
